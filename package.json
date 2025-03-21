@@ -13,7 +13,9 @@
   "keywords": [
     "react-native",
     "dfu",
-    "nordic"
+    "nordic",
+    "expo",
+    "expo-plugin"
   ],
   "author": "Pilloxa <recruitment@pilloxa.com>",
   "license": "MIT",
@@ -37,5 +39,12 @@
       "git add README.md"
     ]
   },
-  "types": "./index.d.ts"
+  "types": "./index.d.ts",
+  "expo": {
+    "name": "react-native-nordic-dfu",
+    "platforms": ["ios", "android"]
+  },
+  "expo-module": {
+    "plugin": "./app.plugin.js"
+  }
 }

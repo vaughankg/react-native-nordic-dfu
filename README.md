@@ -131,3 +131,58 @@ end
 - [How to create init packet](https://github.com/NordicSemiconductor/Android-nRF-Connect/tree/master/init%20packet%20handling "Init packet handling")
 - [nRF51 Development Kit (DK)](http://www.nordicsemi.com/eng/Products/nRF51-DK "nRF51 DK") (compatible with Arduino Uno Revision 3)
 - [nRF52 Development Kit (DK)](http://www.nordicsemi.com/eng/Products/Bluetooth-Smart-Bluetooth-low-energy/nRF52-DK "nRF52 DK") (compatible with Arduino Uno Revision 3)
+
+## Expo Usage
+
+This library now includes Expo plugin support, making it easy to use with Expo projects.
+
+### Installation for Expo (SDK 52+)
+
+```bash
+npx expo install react-native-nordic-dfu
+```
+
+### Configuration
+
+In your `app.json` or `app.config.js`, add the plugin:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      "react-native-nordic-dfu"
+    ]
+  }
+}
+```
+
+The plugin will automatically configure the necessary permissions for both iOS and Android platforms.
+
+### Usage in Expo
+
+The API usage is the same as for regular React Native applications:
+
+```javascript
+import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
+
+// Listen for progress updates
+DFUEmitter.addListener("DFUProgress", ({ percent, currentPart, partsTotal, avgSpeed, speed }) => {
+  console.log("DFU progress: " + percent + "%");
+});
+
+// Listen for state changes
+DFUEmitter.addListener("DFUStateChanged", ({ state }) => {
+  console.log("DFU State:", state);
+});
+
+// Start the DFU process
+NordicDFU.startDFU({
+  deviceAddress: "C3:53:C0:39:2F:99",
+  deviceName: "Device Name",
+  filePath: "path/to/firmware.zip"
+})
+  .then(res => console.log("Transfer done:", res))
+  .catch(error => console.error("DFU error:", error));
+```
+
+Note: On Android, you may need to request runtime permissions for Bluetooth scanning on newer Android versions when using Expo.
