@@ -1,7 +1,7 @@
 # react-native-nordic-dfu [![npm version](https://badge.fury.io/js/react-native-nordic-dfu.svg)](https://badge.fury.io/js/react-native-nordic-dfu) [![CircleCI](https://circleci.com/gh/Pilloxa/react-native-nordic-dfu.svg?style=svg)](https://circleci.com/gh/Pilloxa/react-native-nordic-dfu) [![Known Vulnerabilities](https://snyk.io/test/github/pilloxa/react-native-nordic-dfu/badge.svg)](https://snyk.io/test/github/pilloxa/react-native-nordic-dfu)
 
 This library allows you to do a Device Firmware Update (DFU) of your nrf51 or
-nrf52 chip from Nordic Semiconductor. It works for both iOS and Android.
+nrf52 chip from Nordic Semiconductor. It works for both iOS and Android, with full Expo support.
 
 For more info about the DFU process, see: [Resources](#resources)
 
@@ -11,114 +11,160 @@ For more info about the DFU process, see: [Resources](#resources)
 - If need the main documentation you can find it [here](https://github.com/Pilloxa/react-native-nordic-dfu).
 - This fork contains the latest verisons of `iOSDFULibrary` & `Android-BLE-Library`.
 
-### Installation
+## Expo Support
 
-Install and link the NPM package per usual with
+This library has been optimized to work with Expo SDK 52+ using the Expo plugin system.
+
+### Installation for Expo Projects
 
 ```bash
-npm install --save https://github.com/Salt-PepperEngineering/react-native-nordic-dfu
+# Using npm
+npm install --save https://github.com/Beima-Tech/react-native-nordic-dfu
+
+# Using yarn
+yarn add https://github.com/Beima-Tech/react-native-nordic-dfu
+```
+
+### Configuration for Expo
+
+In your `app.json` or `app.config.js`, add the plugin:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      "react-native-nordic-dfu"
+    ]
+  }
+}
+```
+
+The plugin will automatically:
+- Configure necessary Bluetooth permissions for iOS
+- Add required Bluetooth permissions for Android
+- Set up other required configurations for the Nordic DFU process
+
+### Usage with Expo
+
+```javascript
+import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
+
+// Listen for progress updates
+DFUEmitter.addListener("DFUProgress", ({ percent, currentPart, partsTotal, avgSpeed, speed }) => {
+  console.log("DFU progress: " + percent + "%");
+});
+
+// Listen for state changes
+DFUEmitter.addListener("DFUStateChanged", ({ state }) => {
+  console.log("DFU State:", state);
+});
+
+// Start the DFU process
+NordicDFU.startDFU({
+  deviceAddress: "C3:53:C0:39:2F:99",
+  deviceName: "Your Device Name",
+  filePath: "path/to/firmware.zip",
+  // Optional parameters
+  alternativeAdvertisingNameEnabled: true, // iOS only
+  packetReceiptNotificationParameter: 12
+})
+  .then(res => console.log("Transfer done:", res))
+  .catch(error => console.error("DFU error:", error));
+```
+
+## React Native New Architecture Support
+
+This library supports React Native's New Architecture (Fabric & TurboModules). The implementation automatically detects whether your app is using the new architecture or the legacy one.
+
+### Requirements
+
+- React Native 0.68 or higher with New Architecture enabled
+
+### Configuration for New Architecture
+
+For iOS:
+- Make sure you have enabled the new architecture in your Podfile
+
+For Android:
+- Enable the new architecture by setting `newArchEnabled=true` in your `gradle.properties` file
+
+## Regular React Native Installation
+
+If you're not using Expo, install the package:
+
+```bash
+npm install --save https://github.com/Beima-Tech/react-native-nordic-dfu
 ```
 
 or
 
 ```bash
-yarn add https://github.com/Salt-PepperEngineering/react-native-nordic-dfu
+yarn add https://github.com/Beima-Tech/react-native-nordic-dfu
 ```
 
-For React Native below 60.0 version
+Then follow the setup instructions in the [Project Setup](#project-setup) section below.
 
-```bash
-react-native link react-native-nordic-dfu
-```
+## Project Setup
 
-### Project Setup
-
-Unfortunately, the ios project is written in Objective-C so you will need to use `use_frameworks! :linkage => :static`.
-Note: We are considering rewriting the ios module on Swift, but it depends very much on how much free time we have and how much we needed right now.
+For non-Expo React Native projects:
 
 `Podfile`:
 
-- Flipper Disabled
-
 ```ruby
 target "YourApp" do
-
-  ...
   pod "react-native-nordic-dfu", path: "../node_modules/react-native-nordic-dfu"
-  ...
   use_frameworks! :linkage => :static
-  ...
-  :flipper_configuration => FlipperConfiguration.disabled,
-  ...
-
-end
-```
-
-- Flipper enabled
-
-```ruby
-static_frameworks = ['iOSDFULibrary']
-pre_install do |installer|
-  installer.pod_targets.each do |pod|
-    if static_frameworks.include?(pod.name)
-      puts "Overriding the static_frameworks? method for #{pod.name}"
-      def pod.build_type;
-        Pod::BuildType.new(:linkage => :static, :packaging => :framework)
-      end
-    end
-  end
-end
-
-target "YourApp" do
-
-  ...
-  pod "react-native-nordic-dfu", path: "../node_modules/react-native-nordic-dfu"
-  ...
-  :flipper_configuration => FlipperConfiguration.enabled,
-  ...
-
 end
 ```
 
 `AppDelegate.mm`:
 
-```
-...
+```objective-c
 #import "RNNordicDfu.h"
-...
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  ...
-
   [RNNordicDfu setCentralManagerGetter:^() {
-           return [[CBCentralManager alloc] initWithDelegate:nil queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)];
-       }];
+    return [[CBCentralManager alloc] initWithDelegate:nil queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)];
+  }];
 
-         // Reset manager delegate since the Nordic DFU lib "steals" control over it
-             [RNNordicDfu setOnDFUComplete:^() {
-                 NSLog(@"onDFUComplete");
-             }];
-             [RNNordicDfu setOnDFUError:^() {
-                 NSLog(@"onDFUError");
-             }];
-  ...
-
+  // Reset manager delegate since the Nordic DFU lib "steals" control over it
+  [RNNordicDfu setOnDFUComplete:^() {
+    NSLog(@"onDFUComplete");
+  }];
+  [RNNordicDfu setOnDFUError:^() {
+    NSLog(@"onDFUError");
+  }];
+  
+  // Rest of your AppDelegate code
 }
 ```
 
-### New Example
+## API
 
-1. `cd newExample`
-2. `yarn setup`
-3. Go to `newExample/App.tsx`
-4. Update the `filePath` variable with the link to the firmware file
-5. Update the `BleManagerService.init('', '');` function with the DFU Service & the device name
-6. Press `Connect to Device in Area` button
-7. When you see some small info about the device on the screen Press the `Start Update`
-8. If you have any problems connecting to the Device pleas consult the [react-native-ble-manager](https://github.com/innoveit/react-native-ble-manager)
+### startDFU(options)
+
+Starts the DFU process
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| options.deviceAddress | String | The MAC address for the device that should be updated |
+| options.deviceName | String | Optional name of the device in the update notification |
+| options.filePath | String | The file system path to the zip-file used for updating |
+| options.alternativeAdvertisingNameEnabled | Boolean | Send unique name to device before it is switched into bootloader mode (iOS only) |
+| options.packetReceiptNotificationParameter | Number | Number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification |
+| options.retries | Number | Android only - number of retries for retrying the operation |
+| options.maxMtu | Number | Android only - Maximum MTU size used during the DFU process |
+
+Returns: Promise - resolves with the device address when completed
+
+## Resources
+
+- [DFU Introduction](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v11.0.0/examples_ble_dfu.html?cp=6_0_0_4_3_1 "BLE Bootloader/DFU")
+- [Secure DFU Introduction](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v12.0.0/ble_sdk_app_dfu_bootloader.html?cp=4_0_0_4_3_1 "BLE Secure DFU Bootloader")
+- [Nordic Semiconductor DFU Documentation](https://www.nordicsemi.com/Software-and-tools/Software/nRF-Util)
 
 ### Issues
 
