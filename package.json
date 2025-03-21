@@ -42,7 +42,10 @@
   "types": "./index.d.ts",
   "expo": {
     "name": "react-native-nordic-dfu",
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   },
   "expo-module": {
     "plugin": "./app.plugin.js"
@@ -54,5 +57,8 @@
     "android": {
       "javaPackageName": "com.nordicnordic"
     }
+  },
+  "dependencies": {
+    "react-native": "0.77"
   }
 }
