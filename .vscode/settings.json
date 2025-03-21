@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.h": "objective-c",
+    "*.m": "objective-c",
+    "*.mm": "objective-cpp"
+  },
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/**",
+    "${workspaceFolder}/ios/**",
+    "${workspaceFolder}/node_modules/react-native/React/**",
+    "${workspaceFolder}/node_modules/react-native/ReactCommon/**"
+  ],
+  "C_Cpp.intelliSenseEngine": "default"
+} 
