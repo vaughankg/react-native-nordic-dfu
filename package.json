@@ -46,5 +46,13 @@
   },
   "expo-module": {
     "plugin": "./app.plugin.js"
+  },
+  "codegenConfig": {
+    "name": "RNNordicDfuSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.nordicnordic"
+    }
   }
 }

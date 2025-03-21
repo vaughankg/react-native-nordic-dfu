@@ -186,3 +186,21 @@ NordicDFU.startDFU({
 ```
 
 Note: On Android, you may need to request runtime permissions for Bluetooth scanning on newer Android versions when using Expo.
+
+## React Native New Architecture Support
+
+This library now supports React Native's New Architecture (Fabric & TurboModules). The implementation automatically detects whether your app is using the new architecture or the legacy one.
+
+### Requirements
+
+- React Native 0.73 or higher with New Architecture enabled
+
+### Usage with New Architecture
+
+The API remains the same whether you're using the new architecture or not. The library will automatically use TurboModules when running in an app with the new architecture enabled.
+
+For iOS:
+- Make sure you have enabled the new architecture in your Podfile by setting `use_frameworks! :linkage => :static` and enabling the new architecture flags.
+
+For Android:
+- Enable the new architecture by setting `newArchEnabled=true` in your `gradle.properties` file.
