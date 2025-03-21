@@ -19,15 +19,14 @@
   ],
   "author": "Pilloxa <recruitment@pilloxa.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
-  },
+  "peerDependencies": {},
   "devDependencies": {
     "documentation": "^13.2.5",
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "react": "18",
+    "react-native": "0.77"
   },
   "lint-staged": {
     "*.js": [
@@ -58,7 +57,5 @@
       "javaPackageName": "com.nordicnordic"
     }
   },
-  "dependencies": {
-    "react-native": "0.77"
-  }
+  "dependencies": {}
 }
