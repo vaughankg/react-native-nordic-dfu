@@ -1,6 +1,7 @@
+import { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-export interface Spec {
+export interface Spec extends TurboModule {
   // iOS implementation
   startDFU(
     deviceAddress: string,
