@@ -1,5 +1,5 @@
-import { TurboModule } from 'react-native';
-import { TurboModuleRegistry } from 'react-native';
+import { TurboModule } from "react-native";
+import { TurboModuleRegistry } from "react-native";
 
 export interface Spec extends TurboModule {
   // iOS implementation
@@ -18,18 +18,18 @@ export interface Spec extends TurboModule {
     filePath: string,
     packetReceiptNotificationParameter: number,
     options: {
-      retries: number,
-      maxMtu: number,
+      retries: number;
+      maxMtu: number;
     }
   ): Promise<string>;
 
-  // Event constants
-  DFUProgress: string;
-  DFUStateChanged: string;
-  
+  // // Event constants
+  // DFUProgress: string;
+  // DFUStateChanged: string;
+
   // Add any other native methods used by the module
   addListener(eventType: string): void;
   removeListeners(count: number): void;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('RNNordicDfu'); 
+export default TurboModuleRegistry.getEnforcing<Spec>("RNNordicDfu");
